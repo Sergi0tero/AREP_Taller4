@@ -20,7 +20,7 @@ public class FirstApp {
     public static void main(String[] args) throws IOException {
         Spark spark = new Spark();
         HttpServer server = HttpServer.getInstance();
-        RequestMethod get = (req, res) -> {
+        RequestMethod get = ( res) -> {
             try{
                 res.type("text/html");
                 String header = res.getHeader();
@@ -34,7 +34,7 @@ public class FirstApp {
                 return header + body;
             }
         };
-        RequestMethod post = (req, res) -> {
+        RequestMethod post = (res) -> {
             res.type("application/json");
             return res.getHeader() + res.getResponse();
         };

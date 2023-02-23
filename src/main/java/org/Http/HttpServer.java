@@ -1,11 +1,10 @@
 package org.Http;
 
-import org.controller.RequestMapping;
+import org.spark.Request;
 import org.spark.RequestMethod;
 import org.spark.Spark;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.*;
 import java.io.*;
 import java.util.HashMap;
@@ -43,25 +42,8 @@ public class HttpServer {
         Spark spark = new Spark();
         ServerSocket serverSocket = null;
         String className = args[0];
-        Map<String, Method> requestMethods = new HashMap<>();
+        Request request = Request.getInstance();
 
-        //cargar clase con forname
-        Class argTypes = null;
-        try {
-            argTypes = Class.forName(args[0]);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        Method[] methodArray = argTypes.getMethods();
-        //extraer metodos con anotacion requestMapping
-        for (Method m : methodArray){
-            //extraer una instancia del metodo
-            if (m.isAnnotationPresent(RequestMapping.class)){
-                //extraer el valor del path
-                //poner en la tabla el metodo con llave path
-                requestMethods.put(m.getAnnotation(RequestMapping.class).value(), m);
-            }
-        }
         try {
             serverSocket = new ServerSocket(35000);
         } catch (IOException e) {
@@ -87,11 +69,11 @@ public class HttpServer {
             String inputLine, outputLine;
 
             boolean first_line = true;
-            String request = "/simple";
+            String req = "/simple";
             String reqVerb = "";
             while ((inputLine = in.readLine()) != null) {
                 if (first_line) {
-                    request = inputLine.split(" ")[1];
+                    req = inputLine.split(" ")[1];
                     reqVerb =  inputLine.split(" ")[0];
                     first_line = false;
                 }
@@ -102,29 +84,25 @@ public class HttpServer {
             }
             outputLine = htmlGetForm();
             if (Objects.equals(reqVerb, "GET")){
-                if (request.equals("/")){
+                if (req.equals("/")){
                     outputLine = htmlGetForm();
-                } else if (requestMethods.containsKey(request)){
+                } else if (request.hasMethod(req)){
                     try {
                         outputLine = "HTTP/1.1 200 OK\r\n" +
                                 "Content-type: text/html\r\n" +
-                                "\r\n" + requestMethods.get(request).invoke(null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    } catch (InvocationTargetException e) {
+                                "\r\n" + request.getMethod(req).invoke(null);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
-                }else if (request.startsWith("/apps/")){
-                    outputLine = spark.get(request.substring(5), methods.get("GET"));
-                    System.out.println("entro error");
+                }else if (req.startsWith("/apps/")){
+                    outputLine = spark.get(req.substring(5), methods.get("GET"));
                 } else {
                     outputLine = spark.get("/error404.html", methods.get("GET"));
                 }
             } else if (Objects.equals(reqVerb, "POST")){
-                if (request.startsWith("/apps/")){
-                    outputLine = spark.post(request.substring(7), methods.get("POST"));
+                if (req.startsWith("/apps/")){
+                    outputLine = spark.post(req.substring(7), methods.get("POST"));
                 } else {
-                    System.out.println("entro else del post");
                     outputLine = spark.get("/error404.html", methods.get("GET"));
                 }
             }

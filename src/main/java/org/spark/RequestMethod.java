@@ -8,10 +8,9 @@ import java.io.IOException;
 public interface RequestMethod{
     /**
      * Corre elmetodo HTTP
-     * @param req
      * @param res creador de la respuesta HTTP
      * @return Respuesta HTTP
      * @throws IOException
      */
-    String runMethod(Request req, Response res) throws IOException;
+    String runMethod(Response res) throws IOException;
 }

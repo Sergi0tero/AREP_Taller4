@@ -16,7 +16,7 @@ public class Spark {
      * @throws IOException
      */
     public String get(String path, RequestMethod requestMethod) throws IOException {
-        return requestMethod.runMethod(new Request(), new Response(path, "GET"));
+        return requestMethod.runMethod(new Response(path, "GET"));
     }
 
     /**
@@ -29,6 +29,6 @@ public class Spark {
     public String post(String path, RequestMethod requestMethod) throws IOException {
         String llave = path.split("=")[0];
         String valor = path.split("=")[1];
-        return requestMethod.runMethod(new Request(), new Response(path, "POST"));
+        return requestMethod.runMethod(new Response(path, "POST"));
     }
 }
