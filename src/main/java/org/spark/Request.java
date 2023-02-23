@@ -28,7 +28,8 @@ public class Request {
         File[] files = directory.listFiles();
         for (File file : files) {
             try {
-                Class newClass = Class.forName(file.getPath().substring(0, file.getPath().length() - 5).replace("\\", ".").replace("src.main.java.", ""));
+                String filePath = file.getPath().substring(0, file.getPath().length() - 5);
+                Class newClass = Class.forName(filePath.replace("\\", ".").replace("src.main.java.", ""));
                 if(newClass.isAnnotationPresent(Component.class)){
                     System.out.println("entro " + newClass);
                     classes.add(newClass);
