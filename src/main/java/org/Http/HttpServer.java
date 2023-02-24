@@ -38,10 +38,9 @@ public class HttpServer {
      * @param args
      * @throws IOException
      */
-    public void run(String[] args) throws IOException {
+    public void run() throws IOException {
         Spark spark = new Spark();
         ServerSocket serverSocket = null;
-        String className = args[0];
         Request request = Request.getInstance();
 
         try {

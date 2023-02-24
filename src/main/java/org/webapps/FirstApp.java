@@ -40,6 +40,6 @@ public class FirstApp {
         };
         server.createContext("GET", get);
         server.createContext("POST", post);
-        server.run(args);
+        server.run();
     }
 }
